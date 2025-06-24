@@ -1,19 +1,16 @@
+import { createContext, useEffect, useState, useContext } from "react";
+import Cookies from "js-cookie"; // ✅ this was missing
 
-import React, { createContext, useState, useEffect, useContext } from "react";
-import Cookies from "js-cookie";
+export const AppContext = createContext({});
 
-// Create context
-const AppContext = createContext();
-
-// Provider component
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLogin, setIsLogin] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  // Function to validate the token (you'd typically call your backend API here)
   const validateToken = async (token) => {
-    console.log(token);
-    return true;
+    console.log("Token to validate:", token);
+    return true; // Replace with real backend check
   };
 
   useEffect(() => {
@@ -32,17 +29,18 @@ export const AppProvider = ({ children }) => {
         setIsLogin(false);
         setUser(null);
       }
+      setCheckingAuth(false);
     };
 
     checkLoginStatus();
   }, []);
 
   return (
-    <AppContext.Provider value={{ user, isLogin }}>
+    <AppContext.Provider value={{ user, isLogin, checkingAuth }}>
       {children}
     </AppContext.Provider>
   );
 };
 
-// Custom hook to use the AppContext
+// ✅ This custom hook must be exported and used in your App.jsx
 export const useAppContext = () => useContext(AppContext);

@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const login = async (form, navigate) => {
   try {
@@ -16,8 +17,7 @@ export const login = async (form, navigate) => {
 
     Cookies.set("authToken", data.token, { expires: 1 });
     localStorage.setItem("user", JSON.stringify(data.user));
-    navigate("/");
-    return null;
+    window.location.href = "/home";
   } catch (err) {
     console.error("Login error:", err);
     return "An unexpected error occurred";
@@ -40,7 +40,7 @@ export const register = async (form, navigate) => {
 
     Cookies.set("authToken", data.token, { expires: 1 });
     localStorage.setItem("user", JSON.stringify(data.user));
-    navigate("/"); // or to /dashboard, etc.
+    window.location.href = "/";
     return null;
   } catch (err) {
     console.error("Registration error:", err);
@@ -51,5 +51,5 @@ export const register = async (form, navigate) => {
 export const logout = (navigate) => {
   Cookies.remove("authToken");
   localStorage.removeItem("user");
-  navigate("/login");
+  window.location.href = "/";
 };
