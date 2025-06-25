@@ -115,5 +115,5 @@ Yes, I’m fully comfortable working on both frontend and backend. If provided w
 
 ## 🌐 Live Demo
 
-- **Frontend**: [stayfinder-frontend.vercel.app](https://stayfinder-frontend.vercel.app)
-- **Backend**: [stayfinder-api.onrender.com](https://stayfinder-api.onrender.com)
+- **Frontend**: [stayfinder-frontend.vercel.app](https://stayfinder-green.vercel.app)
+- **Backend**: [stayfinder-api.onrender.com](https://airbnb-igg2.onrender.com)
