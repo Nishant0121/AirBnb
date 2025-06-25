@@ -24,8 +24,8 @@ function Navbar() {
                     {/* Logo */}
                     <div className="flex items-center">
                         <Link to="/" className="flex items-center space-x-2">
-                            <Home className="h-8 w-8 text-blue-600" />
-                            <span className="text-xl font-bold text-gray-900">StayFinder</span>
+                            <Home className="h-8 w-8 text-gradient from-purple-600 via-pink-600 to-orange-500" />
+                            <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500">StayFinder</span>
                         </Link>
                     </div>
 

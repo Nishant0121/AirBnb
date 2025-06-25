@@ -45,7 +45,7 @@ const AddListingPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 py-10 px-4">
+        <div className="min-h-screen mt-5 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
             <div className="max-w-3xl mx-auto">
                 <Card>
                     <CardHeader>

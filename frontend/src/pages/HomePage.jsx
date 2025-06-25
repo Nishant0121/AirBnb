@@ -65,7 +65,7 @@ export function HomePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 flex items-center justify-center">
+            <div className="min-h-screen mt bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 flex items-center justify-center">
                 <div className="text-center space-y-4">
                     <div className="relative">
                         <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto"></div>

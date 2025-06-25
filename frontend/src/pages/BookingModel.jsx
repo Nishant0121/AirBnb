@@ -39,6 +39,8 @@ export function BookingModal({ listing, userId, onClose }) {
 
     const handlePaymentSuccess = async (paymentData) => {
         onClose();
+        alert("Payment successful! Your booking has been confirmed.");
+        window.location.replace = "/";
     };
 
     return (
