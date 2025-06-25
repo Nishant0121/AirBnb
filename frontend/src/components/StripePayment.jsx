@@ -35,7 +35,7 @@ export function StripePayment({ amount, onSuccess, onCancel, userId, listing, se
             }
 
             // Call backend to process payment
-            const response = await fetch('http://localhost:5000/api/bookings', {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/bookings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

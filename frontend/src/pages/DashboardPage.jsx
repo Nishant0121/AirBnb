@@ -19,7 +19,7 @@ const DashboardPage = () => {
         try {
             setLoading(true);
             const token = Cookies.get('authToken');
-            const res = await axios.get('http://localhost:5000/api/bookings/user', {
+            const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/bookings/user`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -49,7 +49,7 @@ const DashboardPage = () => {
     const handleUpdate = async (booking) => {
         try {
             const token = Cookies.get('authToken');
-            await axios.put(`http://localhost:5000/api/bookings/${booking._id}`, {
+            await axios.put(`${import.meta.env.VITE_BASE_URL}/api/bookings/${booking._id}`, {
                 ...formState,
                 userId: booking.userId._id,
                 listingId: booking.listingId
@@ -66,7 +66,7 @@ const DashboardPage = () => {
     const handleDelete = async (bookingId) => {
         try {
             const token = Cookies.get('authToken');
-            await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`, {
+            await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/bookings/${bookingId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchData();
