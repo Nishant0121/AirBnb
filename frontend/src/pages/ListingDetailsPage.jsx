@@ -6,6 +6,7 @@ import {
     Star,
     MapPin
 } from "lucide-react";
+import { Button } from "../components/ui/button";
 
 export function ListingDetailPage() {
     const { id } = useParams();
@@ -13,7 +14,10 @@ export function ListingDetailPage() {
     const [listing, setListing] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showBookingModal, setShowBookingModal] = useState(false);
-    const [userId] = useState("684eee7f702e167943b0fa34");
+    const [userId] = useState(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        return user ? user.id : null;
+    });
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -34,7 +38,7 @@ export function ListingDetailPage() {
     if (!listing) return <div className="text-center py-20">Listing not found</div>;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
             {/* Breadcrumb */}
             <nav className="flex mb-6" aria-label="Breadcrumb">
                 <ol className="inline-flex items-center space-x-1 md:space-x-2">
@@ -100,12 +104,13 @@ export function ListingDetailPage() {
                             </div>
                         </div>
 
-                        <button
+                        <Button
+                            variant="default"
                             onClick={() => setShowBookingModal(true)}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
+                            className="w-full text-white font-bold py-3 px-4 rounded-lg transition duration-200"
                         >
                             Reserve
-                        </button>
+                        </Button>
 
                         <div className="mt-4 text-center text-gray-500 text-sm">
                             You won't be charged yet
@@ -140,3 +145,4 @@ export function ListingDetailPage() {
         </div>
     );
 }
+

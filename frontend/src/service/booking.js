@@ -1,43 +1,53 @@
-// api/bookings.js
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+import Cookies from "js-cookie";
 
-export async function createBooking(bookingData) {
-  const response = await fetch("http://localhost:5000/api/bookings", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+export const createBooking = async (bookingData) => {
+  try {
+    const res = await axios.post(`${BASE_URL}/api/bookings`, {
       ...bookingData,
       amount: Math.round(bookingData.totalPrice * 100), // Stripe expects cents
-    }),
-  });
+    });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to create booking");
+    if (!res.data) {
+      throw new Error(res.data.error || "Failed to create booking");
+    }
+
+    return res.data;
+  } catch (err) {
+    console.error("Error creating booking:", err);
+    throw err;
   }
+};
 
-  return await response.json();
-}
+export const getUserBookings = async () => {
+  const token = Cookies.get("authToken");
 
-export async function getUserBookings(userId) {
-  const response = await fetch(`/api/bookings/user/${userId}`);
+  try {
+    const res = await axios.get(`${BASE_URL}/api/bookings/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to fetch bookings");
+    return res.data;
+  } catch (err) {
+    console.error("Error fetching bookings:", err);
+    throw err;
   }
+};
 
-  return await response.json();
-}
+export const getBookingById = async (id) => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/bookings/${id}`);
 
-export async function getBookingById(id) {
-  const response = await fetch(`/api/bookings/${id}`);
+    if (!res.data) {
+      throw new Error(res.data.error || "Failed to fetch booking");
+    }
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Failed to fetch booking");
+    return res.data;
+  } catch (err) {
+    console.error("Error fetching booking:", err);
+    throw err;
   }
-
-  return await response.json();
-}
+};

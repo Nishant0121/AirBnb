@@ -1,17 +1,15 @@
+import axios from "axios";
 import Cookies from "js-cookie";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export const login = async (form, navigate) => {
   try {
-    const res = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    const res = await axios.post(`${BASE_URL}/api/auth/login`, form);
 
-    const data = await res.json();
+    const data = res.data;
 
-    if (!res.ok) {
+    if (!res.data) {
       return data.error || "Login failed";
     }
 
@@ -26,15 +24,11 @@ export const login = async (form, navigate) => {
 
 export const register = async (form, navigate) => {
   try {
-    const res = await fetch(`${BASE_URL}/api/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    const res = await axios.post(`${BASE_URL}/api/auth/register`, form);
 
-    const data = await res.json();
+    const data = res.data;
 
-    if (!res.ok) {
+    if (!res.data) {
       return data.error || "Registration failed";
     }
 

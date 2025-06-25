@@ -1,16 +1,20 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, User, LogOut, Search } from 'lucide-react';
+import { Home, User, LogOut, Search, ChevronDown } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAppContext } from '../context/appContext';
+import { logout } from '../service/auth';
 
 function Navbar() {
-    const navigate = useNavigate();
-    const { logout } = useAppContext(); // Assuming you have a logout function in context
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
     };
 
     return (
@@ -25,41 +29,37 @@ function Navbar() {
                         </Link>
                     </div>
 
-                    {/* Search Bar */}
-                    <div className="flex-1 max-w-lg mx-8">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                            <Input
-                                type="text"
-                                placeholder="Search destinations..."
-                                className="pl-10 w-full"
-                            />
-                        </div>
-                    </div>
+
 
                     {/* Navigation Links */}
                     <div className="flex items-center space-x-4">
-                        <Link to="/home">
+                        <Link to="/explore">
                             <Button variant="ghost" className="text-gray-700 hover:text-blue-600">
                                 Explore
                             </Button>
                         </Link>
 
-                        <div className="flex items-center space-x-2">
-                            <Button variant="ghost" size="sm" className="p-2">
-                                <User className="h-4 w-4" />
-                            </Button>
+                        {/* Dropdown */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="flex items-center p-2">
+                                    <User className="h-4 w-4" />
+                                    <ChevronDown className="h-4 w-4 ml-1" />
+                                </Button>
+                            </DropdownMenuTrigger>
 
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={handleLogout}
-                                className="flex items-center space-x-1"
-                            >
-                                <LogOut className="h-4 w-4" />
-                                <span>Logout</span>
-                            </Button>
-                        </div>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem asChild>
+                                    <Link to="/profile" className="w-full">
+                                        Profile
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleLogout}>
+                                    Logout
+                                    <LogOut className="ml-auto h-4 w-4 text-red-500" />
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>

@@ -1,9 +1,34 @@
 // routes/bookings.js
 
 const express = require("express");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 const Booking = require("../models/Booking");
+const Listing = require("../models/Listing");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const router = express.Router();
+
+const authenticate = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized: No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.userId);
+    if (!req.user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    next();
+  } catch (err) {
+    console.error(err);
+    return res.status(401).json({ error: "Unauthorized: Invalid token" });
+  }
+};
 
 // Create a booking with payment intent
 router.post("/", async (req, res) => {
@@ -74,45 +99,106 @@ router.post("/", async (req, res) => {
 });
 
 // Get bookings of a user
-router.get("/user/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  const bookings = await Booking.find({ userId });
-  res.json(bookings);
+router.get("/user", authenticate, async (req, res) => {
+  try {
+    const hostId = req.user.id;
+
+    // Get all listings owned by the host
+    const listings = await Listing.find({ hostId });
+
+    const results = await Promise.all(
+      listings.map(async (listing) => {
+        const bookings = await Booking.find({
+          listingId: listing._id,
+        }).populate("userId", "username email"); // Guest info
+
+        if (bookings.length > 0) {
+          return {
+            listing,
+            bookings,
+          };
+        }
+      })
+    );
+
+    const filteredResults = results.filter(Boolean);
+    res.json(filteredResults);
+  } catch (err) {
+    console.error("Error fetching host listings and bookings:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-// Get a particular booking
-router.get("/:id", async (req, res) => {
-  const id = req.params.id;
-  const booking = await Booking.findById(id);
-  if (!booking) {
-    return res.status(404).json({ error: "Booking not found" });
+// 📄 GET a specific booking (with optional user/listing details)
+router.get("/:id", authenticate, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id)
+      .populate("userId", "username email")
+      .populate("listingId");
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    // Ensure only the host of this listing can see it
+    if (booking.listingId.hostId.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    res.json(booking);
+  } catch (err) {
+    console.error("Error fetching booking:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  res.json(booking);
 });
 
-// Update a booking
-router.put("/:id", async (req, res) => {
-  const id = req.params.id;
-  const { userId, listingId, startDate, endDate, totalPrice } = req.body;
-  const booking = await Booking.findByIdAndUpdate(
-    id,
-    { userId, listingId, startDate, endDate, totalPrice },
-    { new: true }
-  );
-  if (!booking) {
-    return res.status(404).json({ error: "Booking not found" });
+// ✏️ UPDATE a booking — only host of listing can update
+router.put("/:id", authenticate, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    const listing = await Listing.findById(booking.listingId);
+    if (!listing || listing.hostId.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    const { startDate, endDate, totalPrice } = req.body;
+
+    booking.startDate = startDate;
+    booking.endDate = endDate;
+    booking.totalPrice = totalPrice;
+
+    await booking.save();
+
+    res.json(booking);
+  } catch (err) {
+    console.error("Error updating booking:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  res.json(booking);
 });
 
-// Delete a booking
-router.delete("/:id", async (req, res) => {
-  const id = req.params.id;
-  const deleted = await Booking.findByIdAndDelete(id);
-  if (!deleted) {
-    return res.status(404).json({ error: "Booking not found" });
+// ❌ DELETE a booking — only host of listing can delete
+router.delete("/:id", authenticate, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    const listing = await Listing.findById(booking.listingId);
+    if (!listing || listing.hostId.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    await booking.deleteOne();
+    res.status(204).json({ message: "Booking deleted" });
+  } catch (err) {
+    console.error("Error deleting booking:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  res.status(204).json({ message: "Booking deleted" });
 });
 
 module.exports = router;

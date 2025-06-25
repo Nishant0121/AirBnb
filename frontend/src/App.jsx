@@ -11,6 +11,10 @@ import AppLayout from './layouts/appLayout';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
+import ProfilePage from './pages/ProfilePage';
+import AddListingPage from './pages/AddListing';
+import DashboardPage from './pages/DashboardPage';
+import EditListingPage from './pages/EditListingPage';
 
 function App() {
   const { isLogin, checkingAuth } = useAppContext();
@@ -45,8 +49,13 @@ function App() {
       {/* Protected routes with AppLayout */}
       {isLogin ? (
         <Route element={<AppLayout />}>
-          <Route path="/" element={<IndexPage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/explore" element={<HomePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/add-listing" element={<AddListingPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/edit-listing/:id" element={<EditListingPage />} />
           <Route
             path="/listing/:id"
             element={

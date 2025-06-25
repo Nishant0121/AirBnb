@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Search, MapPin, DollarSign, Sparkles } from "lucide-react";
 
-export function HomePage() {
+export function ExplorePage() {
     const [allListings, setAllListings] = useState([]);
     const [filteredListings, setFilteredListings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -104,8 +104,8 @@ export function HomePage() {
 
                 {/* Decorative Elements */}
                 <div className="absolute top-0 hidden sm:block left-0 w-32 h-32 bg-white/10 rounded-full -translate-x-16 -translate-y-16 animate-pulse"></div>
-                <div className="absolute top-1/2 hidden sm:block right-0 w-48 h-48 bg-white/5 rounded-full translate-x-24 animate-pulse delay-1000"></div>
-                <div className="absolute bottom-0 hidden sm:block left-1/3 w-24 h-24 bg-white/10 rounded-full translate-y-12 animate-pulse delay-500"></div>
+                <div className="absolute top-1/2 right-0 hidden sm:block w-48 h-48 bg-white/5 rounded-full translate-x-24 animate-pulse delay-1000"></div>
+                <div className="absolute bottom-0 left-1/3 hidden sm:block w-24 h-24 bg-white/10 rounded-full translate-y-12 animate-pulse delay-500"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
